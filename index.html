@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Komisyonmatik — Platform Komisyon Hesaplayıcıları</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0C0A08;
+  --ink2:#2A2520;
+  --ink3:#5C5248;
+  --ink4:#9C8F86;
+  --cream:#FAF7F2;
+  --cream2:#F2EDE4;
+  --cream3:#E8E0D4;
+  --fire:#E8430A;
+  --fire2:#F25C25;
+  --fire-pale:#FDF0EB;
+  --fire-pale2:#FCDDD2;
+  --gold:#B8860B;
+  --gold-pale:#FDF8ED;
+  --teal:#0D7A5F;
+  --teal-pale:#E3F5EF;
+  --white:#FFFFFF;
+  --border:rgba(12,10,8,0.09);
+  --border2:rgba(12,10,8,0.16);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Bricolage Grotesque',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:68px;padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(250,247,242,0.88);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nav-logo-wrap{width:40px;height:40px;flex-shrink:0}
+.brand-name{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-0.6px}
+.brand-name em{color:var(--fire);font-style:normal}
+.nav-menu{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-menu a{text-decoration:none;font-size:14px;font-weight:500;color:var(--ink3);transition:color .2s}
+.nav-menu a:hover{color:var(--ink)}
+.nav-pill{
+  background:var(--ink);color:var(--white)!important;
+  padding:9px 22px;border-radius:100px;
+  font-size:13px!important;font-weight:600!important;
+  transition:background .2s,transform .15s!important;
+  position:relative;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.nav-pill:hover{background:var(--fire)!important;transform:translateY(-1px)}
+.nav-pill .chevron{width:14px;height:14px;fill:rgba(255,255,255,.6);transition:transform .2s;flex-shrink:0}
+.nav-pill-wrap{position:relative}
+.nav-pill-wrap:hover .nav-dropdown{opacity:1;pointer-events:auto;transform:translateY(0)}
+.nav-pill-wrap:hover .chevron{transform:rotate(180deg)}
+.nav-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;
+  background:var(--white);border:1px solid var(--border2);
+  border-radius:16px;padding:8px;
+  min-width:240px;
+  box-shadow:0 16px 48px rgba(12,10,8,.14);
+  opacity:0;pointer-events:none;
+  transform:translateY(-8px);
+  transition:opacity .2s,transform .2s;
+  z-index:300;
+}
+.nav-dropdown a{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:10px;
+  text-decoration:none;font-size:14px;font-weight:600;
+  color:var(--ink2)!important;transition:background .15s;
+}
+.nav-dropdown a:hover{background:var(--cream);color:var(--fire)!important}
+.nav-dropdown a .dd-icon{font-size:18px;width:20px;text-align:center}
+.nav-dropdown a .dd-text{flex:1}
+.nav-dropdown a .dd-badge{
+  font-size:10px;font-weight:700;padding:3px 8px;
+  border-radius:100px;background:var(--teal-pale);color:var(--teal);
+}
+.nav-dd-sep{height:1px;background:var(--border);margin:6px 0}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:0;
+  padding:100px 0 0;
+  max-width:1280px;margin:0 auto;
+}
+.hero-left{padding:0 60px 0 40px}
+.hero-label{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--fire-pale);border:1px solid var(--fire-pale2);
+  color:var(--fire);font-size:12px;font-weight:700;letter-spacing:0.1em;
+  text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:28px;
+}
+.hero-label-dot{width:6px;height:6px;background:var(--fire);border-radius:50%;animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+h1.hero-title{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2.8rem,4.5vw,4.4rem);
+  font-weight:400;line-height:1.08;
+  letter-spacing:-1px;color:var(--ink);
+  margin-bottom:20px;
+}
+h1.hero-title .italic{font-style:italic;color:var(--fire)}
+.hero-sub{
+  font-size:17px;color:var(--ink3);font-weight:400;
+  line-height:1.75;max-width:420px;margin-bottom:44px;
+}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn-fire{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--fire);color:white;text-decoration:none;
+  padding:15px 30px;border-radius:14px;
+  font-size:15px;font-weight:700;
+  box-shadow:0 6px 24px rgba(232,67,10,.28);
+  transition:all .2s;
+}
+.btn-fire:hover{background:var(--fire2);transform:translateY(-2px);box-shadow:0 10px 32px rgba(232,67,10,.35)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;color:var(--ink);text-decoration:none;
+  padding:15px 28px;border-radius:14px;
+  font-size:15px;font-weight:600;
+  border:1.5px solid var(--border2);
+  transition:all .2s;
+}
+.btn-outline:hover{border-color:var(--fire);color:var(--fire)}
+
+.hero-trust{
+  display:flex;align-items:center;gap:10px;
+  margin-top:28px;font-size:13px;color:var(--ink4);
+}
+.trust-avatars{display:flex}
+.trust-av{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--cream3);border:2px solid var(--cream);
+  margin-left:-8px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--ink2);
+}
+.trust-av:first-child{margin-left:0}
+
+/* ── HERO RIGHT: TERMINAL CARD ── */
+.hero-right{
+  padding:80px 40px 80px 0;
+  display:flex;flex-direction:column;gap:20px;align-items:flex-start;
+}
+.terminal{
+  width:100%;background:var(--ink);border-radius:24px;
+  overflow:hidden;box-shadow:0 24px 80px rgba(12,10,8,.22);
+}
+.terminal-bar{
+  background:var(--ink2);padding:14px 20px;
+  display:flex;align-items:center;gap:8px;
+}
+.tbar-dot{width:12px;height:12px;border-radius:50%}
+.tbar-title{
+  flex:1;text-align:center;font-size:12px;color:rgba(255,255,255,.3);font-weight:500;
+}
+.terminal-body{padding:28px}
+.t-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.t-row:last-child{border-bottom:none}
+.t-key{font-size:13px;color:rgba(255,255,255,.45);font-weight:400}
+.t-val{font-size:14px;font-weight:700;color:white}
+.t-val.fire{color:#FF7A4D}
+.t-val.green{color:#5DE8A0}
+.t-val.dim{color:rgba(255,255,255,.35);font-weight:400;font-size:12px}
+.t-sep{
+  padding:10px 0;font-size:11px;
+  color:rgba(255,255,255,.2);letter-spacing:.08em;text-transform:uppercase;font-weight:600;
+}
+.t-result{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:16px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:4px;
+}
+.t-result-label{font-size:12px;color:rgba(255,255,255,.4);font-weight:500}
+.t-result-val{font-size:28px;font-weight:800;color:#5DE8A0;letter-spacing:-0.5px}
+
+.platform-selector{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.ps-btn{
+  padding:8px 16px;border-radius:100px;
+  font-size:12px;font-weight:700;cursor:pointer;
+  border:1.5px solid transparent;transition:all .2s;
+  font-family:inherit;
+}
+.ps-btn.active{background:var(--fire);color:white;border-color:var(--fire)}
+.ps-btn:not(.active){background:white;color:var(--ink2);border-color:var(--border2)}
+.ps-btn:not(.active):hover{border-color:var(--fire);color:var(--fire)}
+
+/* ── MARQUEE ── */
+.marquee-wrap{
+  background:var(--fire);padding:14px 0;
+  overflow:hidden;white-space:nowrap;
+}
+.marquee-track{
+  display:inline-block;
+  animation:marquee 22s linear infinite;
+}
+.marquee-track span{
+  font-size:13px;font-weight:700;color:white;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:0 32px;
+}
+.marquee-track span::after{content:'✦';margin-left:32px;opacity:.5}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── EXTENSIONS ── */
+.section{max-width:1200px;margin:0 auto;padding:100px 40px}
+.sec-eyebrow{
+  display:inline-block;font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--fire);margin-bottom:12px;
+}
+.sec-title{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2rem,3.5vw,3rem);font-weight:400;
+  letter-spacing:-0.8px;line-height:1.15;
+  color:var(--ink);margin-bottom:12px;
+}
+.sec-title em{font-style:italic;color:var(--fire)}
+.sec-sub{font-size:16px;color:var(--ink3);font-weight:400;max-width:480px;line-height:1.7;margin-bottom:56px}
+
+.ext-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+.ext-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:24px;padding:32px;
+  transition:all .3s;position:relative;overflow:hidden;
+  text-decoration:none;color:inherit;display:block;
+}
+.ext-card::after{
+  content:'';position:absolute;
+  bottom:0;left:0;right:0;height:3px;
+  background:var(--fire);transform:scaleX(0);transform-origin:left;
+  transition:transform .3s;
+}
+.ext-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(12,10,8,.1);border-color:var(--cream3)}
+.ext-card:hover::after{transform:scaleX(1)}
+.ext-card.dim{background:var(--cream);pointer-events:none}
+.ext-card.dim::after{display:none}
+
+.ext-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.ext-emoji{font-size:32px;line-height:1;display:block;margin-bottom:0}
+.ext-badge{
+  padding:4px 12px;border-radius:100px;
+  font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+}
+.badge-live{background:var(--teal-pale);color:var(--teal)}
+.badge-soon{background:var(--gold-pale);color:var(--gold)}
+
+.ext-name{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:20px;font-weight:800;letter-spacing:-0.4px;
+  color:var(--ink);margin-bottom:10px;line-height:1.2;
+}
+.ext-desc{font-size:14px;color:var(--ink3);line-height:1.65;margin-bottom:22px;font-weight:400}
+
+.ext-features{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.ext-features li{
+  font-size:13px;color:var(--ink3);
+  display:flex;align-items:flex-start;gap:10px;
+  line-height:1.5;
+}
+.feat-check{
+  width:16px;height:16px;border-radius:50%;
+  background:var(--fire-pale);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.feat-check svg{width:8px;height:8px}
+
+.ext-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:white;
+  padding:11px 22px;border-radius:10px;
+  font-size:13px;font-weight:700;
+  transition:background .2s;
+}
+.ext-cta:hover{background:var(--fire)}
+.ext-cta svg{width:13px;height:13px;fill:white}
+.ext-cta-disabled{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--cream2);color:var(--ink4);
+  padding:11px 22px;border-radius:10px;
+  font-size:13px;font-weight:600;
+}
+
+/* ── HOW SECTION ── */
+.how-bg{background:var(--ink)}
+.how-inner{max-width:1200px;margin:0 auto;padding:100px 40px}
+.how-inner .sec-title{color:white}
+.how-inner .sec-sub{color:rgba(255,255,255,.45)}
+.how-inner .sec-eyebrow{color:var(--fire2)}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:20px;overflow:hidden;margin-top:0}
+.step{background:var(--ink2);padding:40px 36px}
+.step-num{
+  font-family:'Instrument Serif',serif;
+  font-size:72px;font-weight:400;
+  color:rgba(255,255,255,.07);line-height:1;
+  margin-bottom:20px;display:block;
+}
+.step-icon-wrap{
+  width:44px;height:44px;background:rgba(232,67,10,.15);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+}
+.step-icon-wrap svg{width:22px;height:22px;fill:var(--fire2)}
+.step h3{
+  font-size:18px;font-weight:800;color:white;
+  letter-spacing:-0.3px;margin-bottom:10px;
+}
+.step p{font-size:14px;color:rgba(255,255,255,.4);line-height:1.7;font-weight:400}
+
+/* ── PLATFORM STRIP ── */
+.plat-bg{background:var(--cream2)}
+.plat-inner{max-width:1200px;margin:0 auto;padding:64px 40px;text-align:center}
+.plat-title{font-size:14px;font-weight:600;color:var(--ink4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:28px}
+.plat-pills{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.plat-pill{
+  display:flex;align-items:center;gap:10px;
+  background:white;border:1px solid var(--border);
+  border-radius:100px;padding:10px 22px;
+  font-size:14px;font-weight:600;color:var(--ink2);
+}
+.plat-pill .pd{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.plat-pill.soon{opacity:.55}
+.plat-pill.soon .pd-label{font-size:11px;color:var(--gold);font-weight:700;margin-left:4px}
+
+/* ── FINAL CTA ── */
+.cta-section{
+  max-width:800px;margin:0 auto;
+  padding:120px 40px;text-align:center;
+}
+.cta-badge{
+  display:inline-block;background:var(--fire-pale);
+  border:1px solid var(--fire-pale2);color:var(--fire);
+  font-size:12px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:7px 18px;border-radius:100px;margin-bottom:24px;
+}
+.cta-section h2{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(2.4rem,4vw,3.8rem);
+  font-weight:400;letter-spacing:-1px;line-height:1.1;
+  color:var(--ink);margin-bottom:18px;
+}
+.cta-section h2 em{font-style:italic;color:var(--fire)}
+.cta-section p{font-size:17px;color:var(--ink3);font-weight:400;margin-bottom:44px;line-height:1.7}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);padding:48px 40px}
+.foot-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.foot-brand{font-size:18px;font-weight:800;color:white;letter-spacing:-0.4px}
+.foot-brand em{color:var(--fire);font-style:normal}
+.foot-links{display:flex;gap:28px;list-style:none}
+.foot-links a{font-size:13px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:white}
+.foot-copy{font-size:12px;color:rgba(255,255,255,.2)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .hero{grid-template-columns:1fr;padding-top:90px}
+  .hero-left{padding:40px 24px 0}
+  .hero-right{padding:40px 24px;align-items:stretch}
+  .ext-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .section{padding:60px 24px}
+  .nav-menu{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <a href="#" class="nav-brand">
+    <div class="nav-logo-wrap">
+      <!-- LOGO SVG -->
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#E8430A"/>
+        <!-- K harfi stilize -->
+        <path d="M10 10 L10 30 M10 20 L18 13 M10 20 L20 30" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- % işareti -->
+        <circle cx="24" cy="16" r="2.2" stroke="white" stroke-width="2" fill="none"/>
+        <circle cx="30" cy="26" r="2.2" stroke="white" stroke-width="2" fill="none"/>
+        <path d="M22 28 L32 14" stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+      </svg>
+    </div>
+    <span class="brand-name">komisyon<em>matik</em></span>
+  </a>
+  <ul class="nav-menu">
+    <li><a href="#uzantilar">Eklentiler</a></li>
+    <li><a href="#nasil">Nasıl Çalışır</a></li>
+    <li><a href="#platformlar">Platformlar</a></li>
+    <li class="nav-pill-wrap">
+      <span class="nav-pill">
+        Chrome'a Ekle
+        <svg class="chevron" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+      </span>
+      <div class="nav-dropdown">
+        <a href="https://chromewebstore.google.com/detail/nnaaobdpicgkekodmckeddjonkcannfm" target="_blank">
+          <span class="dd-icon">🍕</span><span class="dd-text">Trendyol Yemek</span><span class="dd-badge">Canlı</span>
+        </a>
+        <a href="https://chromewebstore.google.com/detail/emphpokdgmcfeagepjacgglaapcjgdan" target="_blank">
+          <span class="dd-icon">🛵</span><span class="dd-text">Getir Yemek</span><span class="dd-badge">Canlı</span>
+        </a>
+        <div class="nav-dd-sep"></div>
+        <a href="https://chromewebstore.google.com/detail/migrosyemek-komisyon-hesa/lihnkhakgbodgahflpfgbnambbjlgbfg" target="_blank">
+          <span class="dd-icon">🛒</span><span class="dd-text">Migros Yemek</span><span class="dd-badge">Canlı</span>
+        </a>
+        <a href="https://chromewebstore.google.com/detail/yemeksepeti-komisyon-hesa/kpknccpmleapganlopogemcnafagpjnk" target="_blank">
+          <span class="dd-icon">🧺</span><span class="dd-text">Yemeksepeti</span><span class="dd-badge">Canlı</span>
+        </a>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-label">
+      <span class="hero-label-dot"></span>
+      Ücretsiz Chrome Eklentisi
+    </div>
+    <h1 class="hero-title">
+      Net kazancını<br>
+      <em>anında</em> gör,<br>
+      kârlı sat.
+    </h1>
+    <p class="hero-sub">Trendyol Yemek, Getir Yemek ve daha fazla platform için komisyon, KDV ve kurye kesintilerini otomatik hesapla. Tahmin değil, gerçek rakam.</p>
+    <div class="hero-btns">
+      <a href="https://chromewebstore.google.com/detail/nnaaobdpicgkekodmckeddjonkcannfm" target="_blank" class="btn-fire">
+        <svg style="width:16px;height:16px;fill:white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        Hemen İndir — Ücretsiz
+      </a>
+      <a href="#uzantilar" class="btn-outline">
+        Eklentileri Gör
+        <svg style="width:14px;height:14px;fill:currentColor" viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+      </a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-avatars">
+        <div class="trust-av">M</div>
+        <div class="trust-av">A</div>
+        <div class="trust-av">K</div>
+        <div class="trust-av">+</div>
+      </div>
+      <span>Yüzlerce restoran sahibi kullanıyor</span>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="platform-selector">
+      <button class="ps-btn active" onclick="setPlatform('trendyol',this)">🍕 Trendyol</button>
+      <button class="ps-btn" onclick="setPlatform('getir',this)">🛵 Getir</button>
+      <button class="ps-btn" onclick="setPlatform('migros',this)">🛒 Migros</button>
+      <button class="ps-btn" onclick="setPlatform('yemeksepeti',this)">🧺 Yemeksepeti</button>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="tbar-dot" style="background:#FF5F57"></span>
+        <span class="tbar-dot" style="background:#FEBC2E"></span>
+        <span class="tbar-dot" style="background:#28C840"></span>
+        <span class="tbar-title" id="tbar-label">komisyonmatik — Trendyol Yemek</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-row">
+          <span class="t-key">Platform</span>
+          <span class="t-val" id="t-platform">Trendyol Yemek</span>
+        </div>
+        <div class="t-row">
+          <span class="t-key">Sipariş tutarı</span>
+          <span class="t-val">₺280,00</span>
+        </div>
+        <div class="t-row">
+          <span class="t-key">Kurye tipi</span>
+          <span class="t-val dim" id="t-kurye">Kendi Kuryem</span>
+        </div>
+        <div class="t-sep">Kesintiler hesaplanıyor...</div>
+        <div class="t-row">
+          <span class="t-key">Platform komisyonu</span>
+          <span class="t-val fire" id="t-kom">−₺50,40</span>
+        </div>
+        <div class="t-row">
+          <span class="t-key">KDV (%8)</span>
+          <span class="t-val fire" id="t-kdv">−₺22,40</span>
+        </div>
+        <div class="t-row">
+          <span class="t-key">Hizmet bedeli</span>
+          <span class="t-val fire" id="t-hiz">−₺5,60</span>
+        </div>
+        <div class="t-result">
+          <div>
+            <div class="t-result-label">ELİNE GEÇEN</div>
+          </div>
+          <span class="t-result-val" id="t-net">₺201,60</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Trendyol Yemek</span>
+    <span>Getir Yemek</span>
+    <span>Migros Yemek</span>
+    <span>Kendi Kurye</span>
+    <span>Platform Kurye</span>
+    <span>Komisyon Hesapla</span>
+    <span>Net Kazanç</span>
+    <span>KDV Hesapla</span>
+    <span>Trendyol Yemek</span>
+    <span>Getir Yemek</span>
+    <span>Migros Yemek</span>
+    <span>Kendi Kurye</span>
+    <span>Platform Kurye</span>
+    <span>Komisyon Hesapla</span>
+    <span>Net Kazanç</span>
+    <span>KDV Hesapla</span>
+  </div>
+</div>
+
+<!-- ═══ EXTENSIONS ═══ -->
+<section class="section" id="uzantilar">
+  <div class="sec-eyebrow">Chrome Eklentileri</div>
+  <h2 class="sec-title">Her platform için<br><em>özel</em> hesaplayıcı</h2>
+  <p class="sec-sub">Satıcı paneline entegre, kurulum gerektirmeyen, tamamen ücretsiz araçlar.</p>
+
+  <div class="ext-grid" style="grid-template-columns:repeat(2,1fr)">
+
+    <!-- TRENDYOL YEMEK -->
+    <a href="https://chromewebstore.google.com/detail/nnaaobdpicgkekodmckeddjonkcannfm" target="_blank" class="ext-card">
+      <div class="ext-head"><span class="ext-emoji">🍕</span><span class="ext-badge badge-live">Canlı</span></div>
+      <div class="ext-name">Trendyol Yemek<br>Komisyon Hesaplayıcı</div>
+      <p class="ext-desc">Trendyol Yemek satıcı panelinde fiyat belirlerken elinizdeki net tutarı anlık gösterin.</p>
+      <ul class="ext-features">
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Kendi kurye / platform kurye karşılaştırması</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Komisyon + KDV otomatik hesaplama</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Güncel komisyon oranlarıyla çalışır</li>
+      </ul>
+      <span class="ext-cta">Chrome'a Ekle <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></span>
+    </a>
+
+    <!-- GETİR YEMEK -->
+    <a href="https://chromewebstore.google.com/detail/emphpokdgmcfeagepjacgglaapcjgdan" target="_blank" class="ext-card">
+      <div class="ext-head"><span class="ext-emoji">🛵</span><span class="ext-badge badge-live">Canlı</span></div>
+      <div class="ext-name">Getir Yemek<br>Komisyon Hesaplayıcı</div>
+      <p class="ext-desc">Getir Yemek platformunda her siparişten gerçekte ne kazandığınızı anında öğrenin.</p>
+      <ul class="ext-features">
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Net kazanç anlık gösterim</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Hizmet bedeli dahil hesaplama</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Platform + kendi kurye seçeneği</li>
+      </ul>
+      <span class="ext-cta">Chrome'a Ekle <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></span>
+    </a>
+
+    <!-- MİGROS YEMEK -->
+    <a href="https://chromewebstore.google.com/detail/migrosyemek-komisyon-hesa/lihnkhakgbodgahflpfgbnambbjlgbfg" target="_blank" class="ext-card">
+      <div class="ext-head"><span class="ext-emoji">🛒</span><span class="ext-badge badge-live">Canlı</span></div>
+      <div class="ext-name">Migros Yemek<br>Komisyon Hesaplayıcı</div>
+      <p class="ext-desc">Migros Yemek satıcıları için komisyon yapısını analiz et, net kazancını saniyeler içinde gör.</p>
+      <ul class="ext-features">
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Migros Yemek komisyon yapısı analizi</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Net kazanç otomatik hesaplama</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> KDV ve hizmet bedeli dahil</li>
+      </ul>
+      <span class="ext-cta">Chrome'a Ekle <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></span>
+    </a>
+
+    <!-- YEMEKSEPETİ -->
+    <a href="https://chromewebstore.google.com/detail/yemeksepeti-komisyon-hesa/kpknccpmleapganlopogemcnafagpjnk" target="_blank" class="ext-card">
+      <div class="ext-head"><span class="ext-emoji">🧺</span><span class="ext-badge badge-live">Canlı</span></div>
+      <div class="ext-name">Yemeksepeti<br>Komisyon Hesaplayıcı</div>
+      <p class="ext-desc">Yemeksepeti'ndeki komisyon ve kesintileri otomatik hesapla, kârlılığını gerçek rakamlarla ölç.</p>
+      <ul class="ext-features">
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Yemeksepeti komisyon oranları</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Net kazanç anlık hesaplama</li>
+        <li><span class="feat-check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4L3.5 6L6.5 2" stroke="#E8430A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Tüm kesintiler tek ekranda</li>
+      </ul>
+      <span class="ext-cta">Chrome'a Ekle <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="how-bg" id="nasil">
+  <div class="how-inner">
+    <div class="sec-eyebrow">Nasıl Çalışır?</div>
+    <h2 class="sec-title" style="color:white">Üç adımda başla,<br><em>saniyede</em> hesapla</h2>
+    <p class="sec-sub">Kayıt yok. Abonelik yok. Sadece Chrome'a ekle ve kullanmaya başla.</p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <div class="step-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        </div>
+        <h3>İndir & Ekle</h3>
+        <p>Chrome Web Store'dan platforma özel eklentiyi ücretsiz olarak tarayıcına ekle. Tek tık, tek saniye.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <div class="step-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/></svg>
+        </div>
+        <h3>Eklentiyi Başlat</h3>
+        <p>Chrome'un sağ üst köşesindeki uzantılar simgesine tıkla, ilgili komisyonmatik eklentisini seç. Hepsi bu kadar — platforma girmen gerekmiyor.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <div class="step-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm4.24 16L12 15.45 7.77 18l1.12-4.81-3.73-3.23 4.92-.42L12 5l1.92 4.53 4.92.42-3.73 3.23L16.23 18z"/></svg>
+        </div>
+        <h3>Net Kazancı Gör</h3>
+        <p>Fiyat girerken komisyon, KDV ve tüm kesintiler otomatik hesaplanır. Gerçek rakamla karar ver.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PLATFORMS ═══ -->
+<div class="plat-bg" id="platformlar">
+  <div class="plat-inner">
+    <p class="plat-title">Desteklenen Platformlar</p>
+    <div class="plat-pills">
+      <div class="plat-pill"><span class="pd" style="background:#F27A1A"></span>Trendyol Yemek</div>
+      <div class="plat-pill"><span class="pd" style="background:#5C3EBD"></span>Getir Yemek</div>
+      <div class="plat-pill"><span class="pd" style="background:#E81C23"></span>Migros Yemek</div>
+      <div class="plat-pill"><span class="pd" style="background:#FF6000"></span>Yemeksepeti</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="cta-badge">Bugün Başla</div>
+  <h2>Tahmin etmeyi bırak,<br><em>hesapla</em>.</h2>
+  <p>Binlerce lira kazanç farkı komisyon hesabında saklı. Ücretsiz eklentimizi indir, her siparişte ne kazandığını bil.</p>
+  <div class="cta-btns">
+    <a href="https://chromewebstore.google.com/detail/nnaaobdpicgkekodmckeddjonkcannfm" target="_blank" class="btn-fire">🍕 Trendyol Yemek</a>
+    <a href="https://chromewebstore.google.com/detail/emphpokdgmcfeagepjacgglaapcjgdan" target="_blank" class="btn-outline">🛵 Getir Yemek</a>
+    <a href="https://chromewebstore.google.com/detail/migrosyemek-komisyon-hesa/lihnkhakgbodgahflpfgbnambbjlgbfg" target="_blank" class="btn-outline">🛒 Migros Yemek</a>
+    <a href="https://chromewebstore.google.com/detail/yemeksepeti-komisyon-hesa/kpknccpmleapganlopogemcnafagpjnk" target="_blank" class="btn-outline">🧺 Yemeksepeti</a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="foot-brand">komisyon<em>matik</em></div>
+    </div>
+    <ul class="foot-links">
+      <li><a href="#uzantilar">Eklentiler</a></li>
+      <li><a href="#nasil">Nasıl Çalışır</a></li>
+      <li><a href="#platformlar">Platformlar</a></li>
+    </ul>
+    <p class="foot-copy">© 2025 komisyonmatik.com</p>
+  </div>
+</footer>
+
+<script>
+const platforms = {
+  trendyol: { name:'Trendyol Yemek', label:'komisyonmatik — Trendyol Yemek', kurye:'Kendi Kuryem', rate:0.18, kdv:0.08, hiz:5.6, order:280 },
+  getir:    { name:'Getir Yemek',    label:'komisyonmatik — Getir Yemek',    kurye:'Platform Kurye', rate:0.20, kdv:0.08, hiz:7.2, order:280 },
+  migros:   { name:'Migros Yemek',   label:'komisyonmatik — Migros Yemek',   kurye:'Platform Kurye', rate:0.19, kdv:0.08, hiz:6.0, order:280 },
+  yemeksepeti: { name:'Yemeksepeti', label:'komisyonmatik — Yemeksepeti',    kurye:'Platform Kurye', rate:0.22, kdv:0.08, hiz:8.0, order:280 }
+};
+
+function setPlatform(key, btn) {
+  const p = platforms[key];
+  document.getElementById('tbar-label').textContent = p.label;
+  document.getElementById('t-platform').textContent = p.name;
+  document.getElementById('t-kurye').textContent = p.kurye;
+  const kom = p.order * p.rate;
+  const kdv = p.order * p.kdv;
+  const net = p.order - kom - kdv - p.hiz;
+  document.getElementById('t-kom').textContent = '−₺' + kom.toFixed(2);
+  document.getElementById('t-kdv').textContent = '−₺' + kdv.toFixed(2);
+  document.getElementById('t-hiz').textContent = '−₺' + p.hiz.toFixed(2);
+  document.getElementById('t-net').textContent = '₺' + net.toFixed(2);
+  document.querySelectorAll('.ps-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
